@@ -1,0 +1,29 @@
+# 테스트 — main 브랜치 보호의 "필수 상태 체크"로 걸 수 있게 만든 것.
+#
+# main 을 보호하려면 요구할 체크가 하나는 있어야 한다.
+# 이 워크플로의 `test` 잡이 그 체크다.
+name: test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      # 의존성이 없다. 파일을 열면 그대로 도는 것이 이 저장소의 전제이므로
+      # npm install 단계 자체를 두지 않는다.
+      - name: 단위 테스트
+        run: node test/logic.test.js
