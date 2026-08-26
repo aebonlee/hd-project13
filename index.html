@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>J1939 CAN 사양 정리 자동화 — 전기전자검증팀</title>
+<meta name="description" content="전장품 사양서(Word·PDF·Excel)를 올리면 ID·PGN·CAN Channel·Source Address·Period 를 추출해 엑셀 한 장으로 정리합니다. 파일은 브라우저 안에서만 처리합니다.">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<nav class="topnav" aria-label="주요 메뉴">
+  <div class="topnav-inner">
+    <a class="topnav-brand" href="index.html">J1939 CAN 사양 정리 <small>전기전자검증팀 · 기획 안상욱</small></a>
+    <ul class="topnav-links">
+      <li><a href="index.html" class="active" aria-current="page">사양 정리</a></li>
+      <li><a href="guide.html">사용법</a></li>
+      <li><a href="https://github.com/aebonlee/hd-project13" target="_new" rel="noopener noreferrer">저장소</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="hero"><div class="wrap">
+  <div class="eyebrow">생성형 AI 업무자동화 전문가과정 · 1차수</div>
+  <h1>J1939 CAN 사양 정리 자동화</h1>
+  <p>전장품마다 따로 오는 사양서(Word·PDF·Excel)를 올리면
+     <b>ID · PGN · CAN Channel · Source Address · Period</b> 를 뽑아 엑셀 한 장으로 모읍니다.
+     양식이 업체마다 달라도 됩니다.</p>
+</div></header>
+
+<main><div class="wrap">
+
+<div class="card">
+  <h2 style="margin-top:0">1. 사양서를 올리세요</h2>
+  <p class="sub">Word(.docx) · PDF · Excel(.xlsx) 을 한 번에 여러 개 올릴 수 있습니다.
+     모델·전장품이 달라도 한 표로 모입니다.</p>
+  <label class="drop" id="drop">
+    <input type="file" id="file" accept=".xlsx,.xls,.docx,.pdf" multiple>
+    <b>사양서를 끌어다 놓거나 눌러서 고르세요</b>
+    <span>여러 파일 동시 선택 가능 · 파일은 서버로 올라가지 않습니다</span>
+  </label>
+  <ul class="filelist" id="files"></ul>
+  <div class="btnrow">
+    <button class="btn primary" id="run" disabled>추출하기</button>
+    <button class="btn" id="sample">예제 사양서로 해보기</button>
+  </div>
+</div>
+
+<div id="out"></div>
+
+<h2>어떻게 정리하나</h2>
+<p class="sub">사양서에 다섯 가지가 다 있는 일은 드뭅니다. 보통 <b>ID 나 PGN 중 하나만</b> 적혀 있습니다.
+   ID 가 PGN 보다 상위여서 <b>ID 안에 PGN 이 들어 있으므로</b>, 둘 중 하나만 있어도 정리가 됩니다.</p>
+
+<div class="tablewrap"><table>
+  <thead><tr><th>사양서에 있는 것</th><th>채울 수 있는 것</th><th>비고</th></tr></thead>
+  <tbody>
+    <tr><td class="mono">ID</td><td>PGN · Source Address · 우선순위</td>
+        <td>ID 를 뜯으면 그 안에 다 들어 있습니다</td></tr>
+    <tr><td class="mono">PGN</td><td>—</td>
+        <td>우선순위와 SA 를 모르므로 <b>ID 는 만들지 않습니다</b></td></tr>
+    <tr><td class="mono">CAN Channel · Period</td><td>—</td>
+        <td>계산으로 얻을 수 없습니다. 사양서에 있어야 합니다</td></tr>
+  </tbody>
+</table></div>
+
+<div class="note">
+  계산으로 채운 값에는 표에서 <span class="calc" style="position:static">계산</span> 표시가 붙습니다.
+  <b>문서에 적혀 있던 값과 신뢰도가 다르기 때문입니다.</b> 엑셀에도 「계산으로 채운 항목」 열로 남습니다.
+</div>
+
+<h2>어긋난 사양서는 고치지 않고 알립니다</h2>
+<p class="sub">사양서에 ID 와 PGN 이 <b>둘 다</b> 적혀 있는 일이 있습니다.
+   사람이 손으로 옮기다 한쪽만 고치면 둘이 어긋나는데, 그대로 정리하면 틀린 표가 만들어집니다.
+   그래서 계산해 맞춰 보고 어긋나면 「검토필요」에 <b>양쪽 값을 다 적어</b> 알립니다.
+   <b>어느 쪽이 맞는지는 원본을 봐야 알기 때문에 고쳐 주지 않습니다.</b></p>
+
+<div class="note">
+  <b>파일이 서버로 올라가지 않습니다.</b> 읽기도 엑셀 만들기도 전부 이 브라우저 안에서 끝납니다 —
+  사내 사양서를 다루는 도구라 이 점이 중요합니다.
+</div>
+
+</div></main>
+
+<footer><div class="wrap">
+  J1939 CAN 사양 정리 자동화 · 생성형 AI 업무자동화 전문가과정 1차수 — 기획: 안상욱 (전기전자검증팀)
+</div></footer>
+
+<script src="lib/xlsx.full.min.js"></script>
+<script src="js/j1939.js"></script>
+<script src="js/mapping.js"></script>
+<script src="js/read-docx.js"></script>
+<script src="js/extract.js"></script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
