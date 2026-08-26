@@ -27,3 +27,11 @@ jobs:
       # npm install 단계 자체를 두지 않는다.
       - name: 단위 테스트
         run: node test/logic.test.js
+
+      # 규칙 테스트가 전부 통과해도 app.js 의 오타 하나면 페이지가 빈 화면이 된다.
+      # 파일을 읽어서는 안 잡힌다 — 실제로 띄워 봐야 잡힌다.
+      - name: 화면 연기 테스트
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+          node test/smoke.browser.js
