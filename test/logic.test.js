@@ -127,6 +127,14 @@ test('기획서 예시 ID 를 그대로 읽는다', () => {
   assert.strictEqual(J.parseId('CF00400'), 0x0CF00400);
 });
 
+test('★ 접두어 없는 ID 가 전부 숫자로만 보여도 16진으로 읽는다', () => {
+  // 실사용자 사양서 실수: '0x' 를 빼먹었는데 자릿수가 전부 0~9라 글자 단서가 없다.
+  // 자릿수(7~8)로 hex 표기임을 판정해야지, 10진으로 읽으면 다른 메시지가 된다.
+  assert.strictEqual(J.parseId('18000401'), 0x18000401);
+  assert.strictEqual(J.parseId('10000000'), 0x10000000);
+  assert.strictEqual(J.parseId('0100401'), 0x0100401, '7자리도 동일하게 16진');
+});
+
 test('PGN 은 16진 4자리로 적는다 — 접두어 없이', () => {
   assert.strictEqual(J.hexPgn(0xF004), 'F004');
   assert.strictEqual(J.hexPgn(0xE000), 'E000');
